@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Course Comments</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1>Course Discussion</h1>
+      <p>Course ID: <span id="course-id-display">course-123</span></p>
+    </header>
+    
+    <main class="feed-container">
+      <div id="comment-list" data-testid="comment-list" class="comment-list">
+        <!-- Comments will be injected here -->
+      </div>
+    </main>
+
+    <footer class="app-footer">
+      <form id="comment-form" class="comment-form">
+        <input type="text" id="user-id" placeholder="Your Name" required class="input-field" value="User">
+        <input type="text" id="comment-input" data-testid="comment-input" placeholder="Add a comment..." required class="input-field comment-input-field">
+        <button type="submit" data-testid="comment-submit" class="submit-btn">Post</button>
+      </form>
+    </footer>
+  </div>
+
+  <script src="ws-client.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
