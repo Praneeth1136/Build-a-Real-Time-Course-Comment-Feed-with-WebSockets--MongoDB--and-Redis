@@ -6,7 +6,7 @@ let subscriberClient;
 
 async function initRedis() {
   const url = process.env.REDIS_URL || 'redis://localhost:6379';
-  
+
   publisherClient = createClient({ url });
   subscriberClient = createClient({ url });
 
@@ -22,7 +22,7 @@ async function initRedis() {
     try {
       const courseId = channel.split(':')[1];
       const parsedPayload = JSON.parse(message);
-      
+
       broadcastToRoom(courseId, parsedPayload);
     } catch (err) {
       console.error('Error handling redis message', err);
