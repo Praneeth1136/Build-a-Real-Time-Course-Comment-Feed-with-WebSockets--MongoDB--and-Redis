@@ -7,14 +7,14 @@ function connectToCourseSocket(courseId, onMessageCallback) {
     // Dynamically determine WS URL based on current host
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     const wsUrl = `${protocol}//${window.location.host}/ws/courses/${courseId}`;
-    
+
     ws = new WebSocket(wsUrl);
-    
+
     ws.onopen = () => {
       console.log('Connected to real-time feed');
       reconnectTimeout = 1000; // Reset backoff
     };
-    
+
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
@@ -27,7 +27,7 @@ function connectToCourseSocket(courseId, onMessageCallback) {
         console.error('Error parsing WS message', err);
       }
     };
-    
+
     ws.onclose = () => {
       console.log(`Connection lost. Reconnecting in ${reconnectTimeout}ms...`);
       setTimeout(connect, reconnectTimeout);
@@ -41,9 +41,9 @@ function connectToCourseSocket(courseId, onMessageCallback) {
   }
 
   connect();
-  
-  return () => { 
+
+  return () => {
     ws.onclose = null;
-    ws.close(); 
+    ws.close();
   };
 }
