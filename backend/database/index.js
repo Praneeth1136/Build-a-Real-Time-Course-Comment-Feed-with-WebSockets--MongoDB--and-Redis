@@ -14,7 +14,7 @@ async function connectToDatabase() {
     // Ensure index on comments collection
     await db.collection('comments').createIndex({ courseId: 1, createdAt: -1 });
     console.log('Index on { courseId: 1, createdAt: -1 } created or verified');
-    
+
     return db;
   } catch (error) {
     console.error('Failed to connect to MongoDB', error);
