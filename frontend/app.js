@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
   const courseId = 'course-123'; // Default for demo
   document.getElementById('course-id-display').textContent = courseId;
-  
+
   const commentList = document.getElementById('comment-list');
   const commentForm = document.getElementById('comment-form');
   const userIdInput = document.getElementById('user-id');
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function escapeHTML(str) {
-    return str.replace(/[&<>'"]/g, 
+    return str.replace(/[&<>'"]/g,
       tag => ({
         '&': '&amp;',
         '<': '&lt;',
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initialize
   fetchHistory();
-  
+
   // Setup WS connection
   connectToCourseSocket(courseId, (newComment) => {
     renderComment(newComment);
