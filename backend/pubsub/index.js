@@ -1,43 +1,45 @@
-const { createClient } = require('redis');
-const { broadcastToRoom } = require('../websocket/index');
+const Redis = require('ioredis');
 
-let publisherClient;
-let subscriberClient;
+let publisher;
+let subscriber;
 
-async function initRedis() {
-  const url = process.env.REDIS_URL || 'redis://localhost:6379';
+/**
+ * Initializes Redis publisher and subscriber clients with error resilience.
+ */
+function initPubSub() {
+  const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
-  publisherClient = createClient({ url });
-  subscriberClient = createClient({ url });
-
-  publisherClient.on('error', (err) => console.log('Redis Publisher Error', err));
-  subscriberClient.on('error', (err) => console.log('Redis Subscriber Error', err));
-
-  await publisherClient.connect();
-  await subscriberClient.connect();
-
-  console.log('Connected to Redis Publisher and Subscriber');
-
-  await subscriberClient.pSubscribe('course:*:comments', (message, channel) => {
-    try {
-      const courseId = channel.split(':')[1];
-      const parsedPayload = JSON.parse(message);
-
-      broadcastToRoom(courseId, parsedPayload);
-    } catch (err) {
-      console.error('Error handling redis message', err);
-    }
+  publisher = new Redis(redisUrl, {
+    maxRetriesPerRequest: 3,
+    enableReadyCheck: true,
   });
+
+  subscriber = new Redis(redisUrl, {
+    maxRetriesPerRequest: 3,
+    enableReadyCheck: true,
+  });
+
+  publisher.on('error', (err) => console.error('[Redis Publisher Error]', err.message));
+  subscriber.on('error', (err) => console.error('[Redis Subscriber Error]', err.message));
+
+  publisher.on('connect', () => console.log('[Redis] Publisher connected'));
+  subscriber.on('connect', () => console.log('[Redis] Subscriber connected'));
+
+  return { publisher, subscriber };
 }
 
 function getPublisher() {
-  if (!publisherClient) {
-    throw new Error('Redis Publisher not initialized');
-  }
-  return publisherClient;
+  if (!publisher) throw new Error('Publisher not initialized');
+  return publisher;
+}
+
+function getSubscriber() {
+  if (!subscriber) throw new Error('Subscriber not initialized');
+  return subscriber;
 }
 
 module.exports = {
-  initRedis,
-  getPublisher
+  initPubSub,
+  getPublisher,
+  getSubscriber,
 };
